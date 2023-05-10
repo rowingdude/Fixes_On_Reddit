@@ -30,11 +30,7 @@ void setup() {
 
 void loop() {
   int n = WiFi.scanNetworks();
-  if (n == 0) {
-    Serial.println("no networks found");
-  } else {
-    Serial.println("SSID | RSSI");
-  }
+  Serial.println((n == 0) ? "no networks found" : "SSID | RSSI");
 
   rssi_count = 0;
   memset(unique_rssi, 0, sizeof(unique_rssi));
