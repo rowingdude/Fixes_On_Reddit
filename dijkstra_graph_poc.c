@@ -1,27 +1,24 @@
 int minimumInitialValue(int lin, int col, int grid[][MAX]) {
-    int cost[MAX][MAX];
+    // use the smaller dimension for the cost array
+    int minDim = min(lin, col);
+    int maxDim = max(lin, col);
+    int cost[MAX];
 
-    // Initialize the first cell
-    cost[0][0] = grid[0][0] > 0 ? 1 : 1 - grid[0][0];
-
-    // Calculate the cost for the first row
-    for (int j = 1; j < col; j++) {
-        cost[0][j] = max(1, cost[0][j-1] - grid[0][j]);
-    }
-
-    // Calculate the cost for the first column
-    for (int i = 1; i < lin; i++) {
-        cost[i][0] = max(1, cost[i-1][0] - grid[i][0]);
-    }
-
-    // Calculate the cost for the remaining cells
-    for (int i = 1; i < lin; i++) {
-        for (int j = 1; j < col; j++) {
-            int costFromLeft = max(1, cost[i][j-1] - grid[i][j]);
-            int costFromUp = max(1, cost[i-1][j] - grid[i][j]);
-            cost[i][j] = min(costFromLeft, costFromUp);
+    // calculate cost using smaller dimension as row size
+    bool isRowSmaller = lin <= col;
+    for (int i = 0; i < maxDim; i++) {
+        for (int j = 0; j < minDim; j++) {
+            int val = grid[isRowSmaller ? j : i][isRowSmaller ? i : j];
+            if (i == 0 && j == 0) {
+                cost[j] = val > 0 ? 1 : 1 - val;
+            } else if (j == 0) {
+                cost[j] = max(1, cost[j] - val);
+            } else if (i == 0) {
+                cost[j] = max(1, cost[j-1] - val);
+            } else {
+                cost[j] = min(max(1, cost[j] - val), max(1, cost[j-1] - val));
+            }
         }
     }
-
-    return cost[lin-1][col-1];
+    return cost[minDim - 1];
 }
